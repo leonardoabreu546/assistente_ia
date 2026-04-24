@@ -1,5 +1,6 @@
 import Home from './pages/Home'
 import About from './pages/About'
+import 'bootstrap/dist/css/bootstrap.min.css'
 import './App.css'
 
 function App() {
@@ -10,5 +11,5 @@ function App() {
     </>
   )
 }
-  
+
 export default App
