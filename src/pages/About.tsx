@@ -1,4 +1,8 @@
-function About({ description }) {
+type AboutProps = {
+  description?: string
+}
+
+function About({ description }: AboutProps) {
   return (
     <div>
       <h1>About</h1>

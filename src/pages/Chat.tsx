@@ -2,6 +2,7 @@ import { useState } from "react"
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import { db, auth } from "../firebase/firebaseConfig"
 import { doc, setDoc, serverTimestamp } from "firebase/firestore"
+import ChartLine from "../components/ChartLine"
 const apiKey = import.meta.env.VITE_API_AI
 const genAI = new GoogleGenerativeAI(apiKey)
 
@@ -73,16 +74,11 @@ function Chat() {
 
         {chatHistory.map((msg, i) => (
           <div key={i} className="mb-2 d-flex">
-
-            {msg.type === "user" ? (
-              <div className="ms-auto text-end text-break d-block" style={{ maxWidth: "70%" }}>
-                <strong>Você:</strong> {msg.text}
-              </div>
-            ) : (
-              <div className="me-auto text-start text-break d-block" style={{ maxWidth: "70%" }}>
-                <strong>IA:</strong> {msg.text}
-              </div>
-            )}
+            <ChartLine
+              text={msg.text}
+              userName={msg.type === "user" ? "Você" : "IA"}
+              align={msg.type === "user" ? "end" : "start"}
+            />
 
           </div>
         ))}
