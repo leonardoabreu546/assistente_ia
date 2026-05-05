@@ -2,8 +2,7 @@ import { useState } from "react"
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import { db, auth } from "../firebase/firebaseConfig"
 import { doc, setDoc, serverTimestamp } from "firebase/firestore"
-const apiKey = import.meta.env.API_AI
-
+const apiKey = import.meta.env.VITE_API_AI
 const genAI = new GoogleGenerativeAI(apiKey)
 
 function Chat() {
@@ -14,7 +13,7 @@ function Chat() {
   async function sendToAI(history) {
     try {
       const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash"
+        model: "gemini-2.5-flash"
       })
 
       const input = history.map(m => m.text).join("\n")
