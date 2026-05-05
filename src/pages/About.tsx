@@ -1,10 +1,4 @@
-import React from "react";
-
-interface AboutProps {
-  description?: string;
-}
-
-function About({ description }: AboutProps) {
+function About({ description }) {
   return (
     <div>
       <h1>About</h1>

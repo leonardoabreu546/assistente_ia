@@ -1,0 +1,109 @@
+/* Layout responsivo para preencher ecrã na totalidade sem esticar */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Container fluid para preencher horizontalmente */
+.container-fluid {
+  width: 100%;
+  padding: 0 15px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Container normal para conteúdo centrado */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+/* Navbar preenche horizontalmente */
+.navbar {
+  width: 100%;
+  padding: 0.5rem 0;
+}
+
+/* Main content com altura natural */
+main {
+  flex: 1;
+  width: 100%;
+  min-height: 0; /* Evita esticamento */
+}
+
+/* Cards responsivos */
+.card {
+  width: 100%;
+  margin-bottom: 1rem;
+  max-width: 100%;
+}
+
+/* Footer no fundo */
+.footer {
+  width: 100%;
+  margin-top: auto;
+}
+
+/* Evitar esticamento de formulários */
+form {
+  max-width: 100%;
+}
+
+/* Chat container com altura fixa */
+.chat-container {
+  height: 400px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* Dashboard cards sem esticar */
+.dashboard-card {
+  min-height: 150px;
+  max-height: 200px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container-fluid,
+  .container {
+    padding: 0 10px;
+  }
+  
+  .navbar {
+    padding: 0.25rem 0;
+  }
+  
+  .chat-container {
+    height: 300px;
+    max-height: 50vh;
+  }
+}
+
+@media (max-width: 576px) {
+  .container-fluid,
+  .container {
+    padding: 0 5px;
+  }
+  
+  .btn {
+    font-size: 0.875rem;
+  }
+  
+  .chat-container {
+    height: 250px;
+    max-height: 40vh;
+  }
+}
