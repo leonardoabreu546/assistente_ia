@@ -19,6 +19,7 @@ export default function Chat() {
 
   async function sendToAI(history: Message[]) {
     try {
+      // Alterado para 1.5-flash para evitar o limite restrito de 20/dia do 2.0
       const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
       const input = history.map((m) => m.text).join("\n");
@@ -29,11 +30,18 @@ export default function Chat() {
         ...prev,
         { type: "ia", text },
       ]);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro na IA:", error);
+      
+      // Verifica se o erro é de quota (429)
+      const isQuotaError = error.message?.includes("429") || error.message?.includes("quota");
+      const errorMessage = isQuotaError 
+        ? "Limite diário atingido. Tenta novamente mais tarde ou muda o modelo." 
+        : "Erro ao contactar a IA.";
+
       setChatHistory((prev) => [
         ...prev,
-        { type: "error", text: "Erro ao contactar a IA." },
+        { type: "error", text: errorMessage },
       ]);
     } finally {
       setLoading(false);
