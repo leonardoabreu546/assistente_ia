@@ -1,19 +1,12 @@
 import { useState, useEffect } from "react"
-import { db, auth } from "../firebase/firebaseConfig"
-import { collection, query, where, onSnapshot, orderBy } from "firebase/firestore"
+import { auth } from "../firebase/firebaseConfig"
+import { useChat } from "../context/ChatContext" // Importar o nosso hook
 import type { User } from "firebase/auth"
 import StatCard from "../components/dashboard/StatCard"
 import ActivityCard from "../components/dashboard/ActivityCard"
 import LoginPrompt from "../components/auth/LoginPrompt"
 import DashboardHeader from "../components/dashboard/DashboardHeader"
 import DashboardStatsGrid from "../components/dashboard/DashboardStatsGrid"
-import LoadingScreen from "../components/layout/LoadingScreen"
-
-interface ChatDoc {
-  userId: string;
-  messages: { type: string; text: string }[];
-  createdAt?: any; 
-}
 
 interface ChartData {
   name: string;
@@ -21,72 +14,53 @@ interface ChartData {
 }
 
 export default function Dashboard() {
-  const [stats, setStats] = useState({
-    totalChats: 0,
-    totalMessages: 0,
-    lastActivity: null as Date | null
-  })
-
-  const [chartData, setChartData] = useState<ChartData[]>([])
-  const [loading, setLoading] = useState(true)
+  const { sessions } = useChat(); // Pegar os dados globais
   const [user, setUser] = useState<User | null>(null)
+  const [chartData, setChartData] = useState<ChartData[]>([])
 
+  // Monitorar Autenticação
   useEffect(() => {
     const unsubscribeAuth = auth.onAuthStateChanged((currentUser) => {
       setUser(currentUser)
-      if (!currentUser) {
-        setLoading(false)
-        return
-      }
-
-      const q = query(
-        collection(db, "chats"),
-        where("userId", "==", currentUser.uid),
-        orderBy("createdAt", "desc")
-      )
-
-      const unsubscribeSnapshot = onSnapshot(q, (snapshot) => {
-        const chats = snapshot.docs.map(doc => doc.data() as ChatDoc)
-        const days = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
-        const messagesByDay: Record<string, number> = Object.fromEntries(days.map(d => [d, 0]))
-
-        let totalMessages = 0
-        chats.forEach(chat => {
-          const messages = chat.messages || []
-          totalMessages += messages.length
-          const date = chat.createdAt?.toDate?.() || new Date()
-          const day = days[date.getDay()]
-          messagesByDay[day] += messages.filter(m => m.type === "user").length
-        })
-
-        setStats({
-          totalChats: chats.length,
-          totalMessages,
-          lastActivity: chats[0]?.createdAt?.toDate?.() || null
-        })
-
-        setChartData(days.map(day => ({ name: day, messages: messagesByDay[day] })))
-        setLoading(false)
-      })
-
-      return () => unsubscribeSnapshot()
     })
-
     return () => unsubscribeAuth()
   }, [])
 
-  if (loading) return <LoadingScreen />
+  // Processar dados para o gráfico sempre que as sessões mudarem
+  useEffect(() => {
+    const days = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
+    const messagesByDay: Record<string, number> = Object.fromEntries(days.map(d => [d, 0]))
+
+    sessions.forEach(session => {
+      // Usamos a data da última atividade ou do timestamp da mensagem
+      const date = session.lastActivity;
+      const day = days[date.getDay()]
+      
+      // Contamos apenas mensagens do utilizador para o gráfico de produtividade
+      const userMessagesCount = session.messages.filter(m => m.type === "user").length
+      messagesByDay[day] += userMessagesCount
+    })
+
+    setChartData(days.map(day => ({ name: day, messages: messagesByDay[day] })))
+  }, [sessions])
+
+  // Cálculos rápidos baseados no contexto
+  const totalChats = sessions.length
+  const totalMessages = sessions.reduce((acc, s) => acc + s.messages.length, 0)
+  const lastActivityDate = sessions.length > 0 
+    ? new Date(Math.max(...sessions.map(s => s.lastActivity.getTime())))
+    : null
 
   return (
     <div className="container mt-4">
       <DashboardHeader />
 
       <DashboardStatsGrid>
-        <StatCard title="Conversas" value={stats.totalChats} variant="primary" />
-        <StatCard title="Mensagens" value={stats.totalMessages} variant="success" />
+        <StatCard title="Conversas" value={totalChats} variant="primary" />
+        <StatCard title="Mensagens Total" value={totalMessages} variant="success" />
         <StatCard 
           title="Última atividade" 
-          value={stats.lastActivity ? stats.lastActivity.toLocaleString() : "Sem atividade"} 
+          value={lastActivityDate ? lastActivityDate.toLocaleString('pt-PT') : "Sem atividade"} 
           variant="info" 
         />
         <ActivityCard data={chartData} />
