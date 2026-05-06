@@ -16,24 +16,26 @@ import './styles/responsive.css'
 function App() {
   return (
     <ChatProvider>
-      <Header />
-      <main className="flex-grow-1">
-        <Routes>
-          <Route path="/" element={<Home description="Assistente de IA" />} />
-          <Route
-            path="/about"
-            element={
-              <About description="Este é um assistente de inteligência artificial desenvolvido para ajudar os usuários a obter informações e realizar tarefas de forma eficiente." />
-            }
-          />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
-      </main>
-      <Footer />
+      <div className="d-flex flex-column min-vh-100">
+        <Header />
+        <main className="flex-grow-1">
+          <Routes>
+            <Route path="/" element={<Home description="Assistente de IA" />} />
+            <Route
+              path="/about"
+              element={
+                <About description="Este é um assistente de inteligência artificial desenvolvido para ajudar os usuários a obter informações e realizar tarefas de forma eficiente." />
+              }
+            />
+            <Route path="/chat" element={<Chat />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/history" element={<History />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
     </ChatProvider>
   )
 }
