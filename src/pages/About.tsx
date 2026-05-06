@@ -1,5 +1,5 @@
-import Hero from "../components/Hero";
-import AboutDetails from "../components/AboutDetails";
+import Hero from "../components/layout/Hero";
+import AboutDetails from "../components/ui/AboutDetails";
 
 type AboutProps = {
   description?: string;

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { db, auth } from "../firebase/firebaseConfig";
+import { auth, db } from "../../firebase/firebaseConfig";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import ChatHistory from "./ChatHistory";
 import ChatInput from "./ChatInput";

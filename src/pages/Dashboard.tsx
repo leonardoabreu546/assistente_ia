@@ -2,12 +2,12 @@ import { useState, useEffect } from "react"
 import { db, auth } from "../firebase/firebaseConfig"
 import { collection, query, where, onSnapshot, orderBy } from "firebase/firestore"
 import type { User } from "firebase/auth"
-import StatCard from "../components/StatCard"
-import ActivityCard from "../components/ActivityCard"
-import LoginPrompt from "../components/LoginPrompt"
-import DashboardHeader from "../components/DashboardHeader"
-import DashboardStatsGrid from "../components/DashboardStatsGrid"
-import LoadingScreen from "../components/LoadingScreen"
+import StatCard from "../components/dashboard/StatCard"
+import ActivityCard from "../components/dashboard/ActivityCard"
+import LoginPrompt from "../components/auth/LoginPrompt"
+import DashboardHeader from "../components/dashboard/DashboardHeader"
+import DashboardStatsGrid from "../components/dashboard/DashboardStatsGrid"
+import LoadingScreen from "../components/layout/LoadingScreen"
 
 interface ChatDoc {
   userId: string;

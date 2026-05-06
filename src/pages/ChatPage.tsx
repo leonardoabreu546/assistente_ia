@@ -1,6 +1,6 @@
 import React from "react";
-import Chat from "../components/Chat"; // Certifique-se que o componente Chat está nesta pasta
-import ChatContainer from "../components/ChatContainer";
+import Chat from "../components/chat/Chat";
+import ChatContainer from "../components/chat/ChatContainer";
 
 export default function ChatPage() {
   return (

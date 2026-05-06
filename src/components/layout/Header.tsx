@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { auth } from '../firebase/firebaseConfig'
+import { auth } from '../../firebase/firebaseConfig'
 import { signOut } from 'firebase/auth';
 import type { User } from 'firebase/auth';
-import { useTheme } from '../hooks/useTheme'
+import { useTheme } from '../../hooks/useTheme'
 
 function Header() {
 

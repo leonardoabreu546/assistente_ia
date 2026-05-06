@@ -1,14 +1,10 @@
 import { useState, useEffect } from "react"
 import { db, auth } from "../firebase/firebaseConfig"
 import { collection, query, where, orderBy, onSnapshot } from "firebase/firestore"
-
-// Componentes de Feedback
-import LoadingScreen from "../components/LoadingScreen"
-import EmptyHistory from "../components/EmptyHistory"
-
-// Componentes de UI extraídos
-import HistoryHeader from "../components/HistoryHeader"
-import HistoryList from "../components/HistoryList"
+import LoadingScreen from "../components/layout/LoadingScreen"
+import EmptyHistory from "../components/history/EmptyHistory"
+import HistoryHeader from "../components/history/HistoryHeader"
+import HistoryList from "../components/history/HistoryList"
 
 interface ChatHistory {
   id: string;

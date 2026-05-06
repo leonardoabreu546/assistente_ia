@@ -1,4 +1,4 @@
-import ChartLine from "./ChartLine";
+import ChartLine from "../dashboard/ChartLine";
 
 interface Message {
   type: string;

@@ -1,5 +1,5 @@
 // src/pages/Home.tsx
-import Hero from "../components/Hero";
+import Hero from "../components/layout/Hero";
 
 interface HomeProps {
   description?: string; // O "?" significa que a descrição é opcional

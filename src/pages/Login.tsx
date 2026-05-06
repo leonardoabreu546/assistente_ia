@@ -2,8 +2,8 @@ import { useState } from "react"
 import { auth } from "../firebase/firebaseConfig"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { useNavigate } from "react-router-dom"
-import AuthCard from "../components/AuthCard"
-import LoginForm from "../components/LoginForm"
+import AuthCard from "../components/auth/AuthCard"
+import LoginForm from "../components/auth/LoginForm"
 
 export default function Login() {
   const [email, setEmail] = useState("")
