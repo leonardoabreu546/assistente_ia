@@ -1,15 +1,25 @@
 import React from "react";
+import { useChat } from "../context/ChatContext"; // Importamos o nosso Hook
 
 interface ChatInputProps {
   prompt: string;
   setPrompt: (value: string) => void;
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   isLoading: boolean;
 }
 
-export default function ChatInput({ prompt, setPrompt, onSubmit, isLoading }: ChatInputProps) {
+export default function ChatInput({ prompt, setPrompt, isLoading }: ChatInputProps) {
+  const { sendMessage } = useChat(); // Ligação ao Contexto
+
+  const handleLocalSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (prompt.trim() && !isLoading) {
+      sendMessage(prompt); // Envia para o estado global (Contexto)
+      setPrompt(""); // Limpa o input local
+    }
+  };
+
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={handleLocalSubmit}>
       <div className="input-group">
         <input
           className="form-control"
@@ -18,7 +28,7 @@ export default function ChatInput({ prompt, setPrompt, onSubmit, isLoading }: Ch
           placeholder="Digite sua mensagem..."
           disabled={isLoading}
         />
-        <button className="btn btn-primary" disabled={isLoading}>
+        <button type="submit" className="btn btn-primary" disabled={isLoading}>
           {isLoading ? "Pensando..." : "Enviar"}
         </button>
       </div>

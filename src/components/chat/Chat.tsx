@@ -1,86 +1,56 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { auth, db } from "../../firebase/firebaseConfig";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { useChat } from "../context/ChatContext"; // Importar Contexto
 import ChatHistory from "./ChatHistory";
 import ChatInput from "./ChatInput";
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_API_AI);
 
-interface Message {
-  type: string;
-  text: string;
-}
-
 export default function Chat() {
   const [prompt, setPrompt] = useState("");
-  const [chatHistory, setChatHistory] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
+  
+  // Pegamos os dados e a função de adicionar resposta do contexto
+  const { sessions, currentSessionId, addAIResponse } = useChat();
 
-  async function sendToAI(history: Message[]) {
+  // Encontrar a sessão atual para mostrar as mensagens no ChatHistory
+  const currentSession = sessions.find(s => s.id === currentSessionId);
+  const chatHistory = currentSession ? currentSession.messages : [];
+
+  async function sendToAI(messageText: string) {
+    setLoading(true);
     try {
-      // Alterado para 1.5-flash para evitar o limite restrito de 20/dia do 2.0
-      const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-
-      const input = history.map((m) => m.text).join("\n");
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      
+      // Criamos um histórico simples para a IA entender o contexto da conversa atual
+      const contextHistory = chatHistory.map(m => m.text).join("\n");
+      const input = `${contextHistory}\n${messageText}`;
+      
       const result = await model.generateContent(input);
       const text = result.response.text();
       
-      setChatHistory((prev) => [
-        ...prev,
-        { type: "ia", text },
-      ]);
+      // Guardar resposta da IA no Contexto
+      addAIResponse(text);
     } catch (error: any) {
       console.error("Erro na IA:", error);
-      
-      // Verifica se o erro é de quota (429)
       const isQuotaError = error.message?.includes("429") || error.message?.includes("quota");
       const errorMessage = isQuotaError 
-        ? "Limite diário atingido. Tenta novamente mais tarde ou muda o modelo." 
+        ? "Limite diário atingido." 
         : "Erro ao contactar a IA.";
-
-      setChatHistory((prev) => [
-        ...prev,
-        { type: "error", text: errorMessage },
-      ]);
+      
+      addAIResponse(errorMessage);
     } finally {
       setLoading(false);
     }
   }
 
-  async function saveToFirestore(messages: Message[]) {
-    const user = auth.currentUser;
-    if (!user) return;
-
-    try {
-      await setDoc(
-        doc(db, "chats", user.uid),
-        {
-          userId: user.uid,
-          messages,
-          updatedAt: serverTimestamp(),
-        },
-        { merge: true }
-      );
-    } catch (err) {
-      console.error("Erro Firestore:", err);
+  // Monitorizar quando uma nova mensagem do utilizador entra no contexto para disparar a IA
+  useEffect(() => {
+    const lastMessage = chatHistory[chatHistory.length - 1];
+    if (lastMessage && lastMessage.type === 'user' && !loading) {
+      sendToAI(lastMessage.text);
     }
-  }
-
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    
-    if (!prompt.trim() || loading) return;
-
-    const updated = [...chatHistory, { type: "user", text: prompt }];
-    
-    setChatHistory(updated);
-    setPrompt("");
-    setLoading(true);
-
-    sendToAI(updated);
-    saveToFirestore(updated);
-  }
+  }, [chatHistory]);
 
   return (
     <>
@@ -88,7 +58,6 @@ export default function Chat() {
       <ChatInput
         prompt={prompt}
         setPrompt={setPrompt}
-        onSubmit={handleSubmit}
         isLoading={loading}
       />
     </>
