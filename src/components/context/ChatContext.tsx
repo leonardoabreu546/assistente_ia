@@ -1,12 +1,11 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
-// Estrutura de uma mensagem individual
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+
 interface Message {
   type: 'user' | 'ai';
   text: string;
   timestamp: Date;
 }
 
-// Estrutura de uma sessão de chat (o que aparece na lateral)
 interface ChatSession {
   id: string;
   title: string;
@@ -14,7 +13,6 @@ interface ChatSession {
   lastActivity: Date;
 }
 
-// Definição das funções e estados que o contexto disponibiliza
 interface ChatContextType {
   sessions: ChatSession[];
   currentSessionId: string | null;
@@ -27,10 +25,36 @@ interface ChatContextType {
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
-  const [sessions, setSessions] = useState<ChatSession[]>([]);
+  // Inicializa o estado tentando carregar do LocalStorage
+  const [sessions, setSessions] = useState<ChatSession[]>(() => {
+    const saved = localStorage.getItem("chat_sessions");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        // Converte strings de data de volta para objetos Date (essencial para o TS e Dashboard)
+        return parsed.map((s: any) => ({
+          ...s,
+          lastActivity: new Date(s.lastActivity),
+          messages: s.messages.map((m: any) => ({
+            ...m,
+            timestamp: new Date(m.timestamp)
+          }))
+        }));
+      } catch (e) {
+        console.error("Erro ao carregar sessões:", e);
+        return [];
+      }
+    }
+    return [];
+  });
+
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
 
-  // Função para iniciar um novo chat
+  // Salva no LocalStorage sempre que houver mudanças nas sessões
+  useEffect(() => {
+    localStorage.setItem("chat_sessions", JSON.stringify(sessions));
+  }, [sessions]);
+
   const createNewChat = () => {
     const newId = Date.now().toString();
     const newChat: ChatSession = {
@@ -43,7 +67,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setCurrentSessionId(newId);
   };
 
-  // Função para enviar mensagem do utilizador
   const sendMessage = (text: string) => {
     const newMessage: Message = { type: 'user', text, timestamp: new Date() };
 
@@ -71,7 +94,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Função para adicionar a resposta da IA ao chat atual
   const addAIResponse = (text: string) => {
     const aiMessage: Message = { type: 'ai', text, timestamp: new Date() };
 
@@ -101,7 +123,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// Hook personalizado para usar o contexto
 export const useChat = () => {
   const context = useContext(ChatContext);
   if (!context) {
