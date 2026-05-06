@@ -1,12 +1,19 @@
+import Hero from "../components/Hero";
+import AboutDetails from "../components/AboutDetails";
+
 type AboutProps = {
-  description?: string
-}
+  description?: string;
+};
 
 function About({ description }: AboutProps) {
   return (
-    <div>
-      <h1>About</h1>
-      {description && <p>{description}</p>}
+    <div className="container mt-4">
+      <Hero 
+        title="Sobre o Projeto" 
+        description={description} 
+      />
+      
+      <AboutDetails />
     </div>
   );
 }

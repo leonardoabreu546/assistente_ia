@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { auth } from '../../firebase/firebaseConfig'
-import { signOut } from 'firebase/auth'
-import { useTheme } from '../../hooks/useTheme'
+import { auth } from '../firebase/firebaseConfig'
+import { signOut } from 'firebase/auth';
+import type { User } from 'firebase/auth';
+import { useTheme } from '../hooks/useTheme'
 
 function Header() {
-  const [user, setUser] = useState(null)
+
+  const [user, setUser] = useState<User | null>(null)
   const { theme, toggleTheme } = useTheme()
 
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       setUser(user)
     })
+    return () => unsubscribe() 
   }, [])
 
   const handleLogout = async () => {
