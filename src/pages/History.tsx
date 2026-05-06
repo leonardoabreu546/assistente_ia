@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react"
 import { db, auth } from "../firebase/firebaseConfig"
 import { collection, query, where, orderBy, onSnapshot } from "firebase/firestore"
-import { Link } from "react-router-dom"
 
-// Importação dos componentes
+// Componentes de Feedback
 import LoadingScreen from "../components/LoadingScreen"
 import EmptyHistory from "../components/EmptyHistory"
-import HistoryItem from "../components/HistoryItem"
 
-// Interface para corrigir erros de TypeScript
+// Componentes de UI extraídos
+import HistoryHeader from "../components/HistoryHeader"
+import HistoryList from "../components/HistoryList"
+
 interface ChatHistory {
   id: string;
   userId: string;
@@ -22,7 +23,6 @@ export default function History() {
 
   useEffect(() => {
     const user = auth.currentUser
-
     if (!user) {
       setChats([])
       setLoading(false)
@@ -53,21 +53,8 @@ export default function History() {
 
   return (
     <div className="container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="fw-bold m-0">Histórico</h2>
-        <Link to="/chat" className="btn btn-primary btn-sm">Nova conversa</Link>
-      </div>
-
-      <div className="list-group list-group-flush">
-        {chats.map(chat => (
-          <HistoryItem 
-            key={chat.id}
-            id={chat.id}
-            createdAt={chat.createdAt}
-            lastMessage={chat.messages?.at(-1)?.text}
-          />
-        ))}
-      </div>
+      <HistoryHeader />
+      <HistoryList chats={chats} />
     </div>
   )
 }
