@@ -1,5 +1,7 @@
+import { ReactNode } from "react"
+
 type ChatLineProps = {
-  text: string
+  text: ReactNode // Alterado de string para ReactNode
   userName: string
   align?: "start" | "end"
 }
@@ -18,7 +20,7 @@ export default function ChatLine({
       }`}
       style={{ maxWidth: "70%" }}
     >
-      <strong>{userName}:</strong> {text}
+      <strong>{userName}:</strong> <div>{text}</div>
     </div>
   )
 }

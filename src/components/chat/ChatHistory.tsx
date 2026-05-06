@@ -1,3 +1,4 @@
+import ReactMarkdown from 'react-markdown';
 import ChartLine from "../dashboard/ChartLine";
 
 interface Message {
@@ -16,7 +17,8 @@ export default function ChatHistory({ messages, isLoading }: ChatHistoryProps) {
       {messages.map((msg, i) => (
         <div key={i} className="mb-2 d-flex">
           <ChartLine
-            text={msg.text}
+            // Se for IA, aplica o Markdown. Se for usuário, envia o texto puro.
+            text={msg.type === "ai" ? <ReactMarkdown>{msg.text}</ReactMarkdown> : msg.text}
             userName={msg.type === "user" ? "Você" : "IA"}
             align={msg.type === "user" ? "end" : "start"}
           />
