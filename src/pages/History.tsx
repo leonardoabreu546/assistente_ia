@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react"
 import { db, auth } from "../firebase/firebaseConfig"
 import { collection, query, where, orderBy, onSnapshot } from "firebase/firestore"
-import LoadingScreen from "../components/layout/LoadingScreen"
 import EmptyHistory from "../components/history/EmptyHistory"
 import HistoryHeader from "../components/history/HistoryHeader"
 import HistoryList from "../components/history/HistoryList"
@@ -15,13 +14,11 @@ interface ChatHistory {
 
 export default function History() {
   const [chats, setChats] = useState<ChatHistory[]>([])
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const user = auth.currentUser
     if (!user) {
       setChats([])
-      setLoading(false)
       return
     }
 
@@ -38,13 +35,11 @@ export default function History() {
       })) as ChatHistory[]
 
       setChats(data)
-      setLoading(false)
     })
 
     return () => unsubscribe()
   }, [])
 
-  if (loading) return <LoadingScreen />
   if (chats.length === 0) return <EmptyHistory />
 
   return (
