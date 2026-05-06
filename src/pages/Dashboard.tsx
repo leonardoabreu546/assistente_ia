@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { auth } from "../firebase/firebaseConfig"
-import { useChat } from "../context/ChatContext" // Importar o nosso hook
+import { useChat } from "../components/context/ChatContext" // Importar o nosso hook
 import type { User } from "firebase/auth"
 import StatCard from "../components/dashboard/StatCard"
 import ActivityCard from "../components/dashboard/ActivityCard"
