@@ -1,9 +1,23 @@
 import { useState, useEffect } from "react"
 import { db, auth } from "../firebase/firebaseConfig"
 import { collection, query, where, orderBy, onSnapshot } from "firebase/firestore"
+import { Link } from "react-router-dom"
+
+// Importação dos componentes
+import LoadingScreen from "../components/LoadingScreen"
+import EmptyHistory from "../components/EmptyHistory"
+import HistoryItem from "../components/HistoryItem"
+
+// Interface para corrigir erros de TypeScript
+interface ChatHistory {
+  id: string;
+  userId: string;
+  messages: { type: string; text: string }[];
+  createdAt?: any;
+}
 
 export default function History() {
-  const [chats, setChats] = useState([])
+  const [chats, setChats] = useState<ChatHistory[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -25,7 +39,7 @@ export default function History() {
       const data = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
-      }))
+      })) as ChatHistory[]
 
       setChats(data)
       setLoading(false)
@@ -34,66 +48,25 @@ export default function History() {
     return () => unsubscribe()
   }, [])
 
-  if (loading) {
-    return (
-      <div className="container mt-4 text-center">
-        <div className="spinner-border text-primary" />
-      </div>
-    )
-  }
-
-  if (chats.length === 0) {
-    return (
-      <div className="container mt-4 text-center">
-        <p>Nenhuma conversa encontrada.</p>
-        <a href="/chat" className="btn btn-primary">
-          Iniciar nova conversa
-        </a>
-      </div>
-    )
-  }
+  if (loading) return <LoadingScreen />
+  if (chats.length === 0) return <EmptyHistory />
 
   return (
     <div className="container mt-4">
-      <h2>Histórico</h2>
-
-      <div className="list-group">
-
-        {chats.map(chat => (
-          <div key={chat.id} className="list-group-item">
-
-            <div className="d-flex justify-content-between">
-              <div>
-                <h6>Conversa</h6>
-
-                <small className="text-muted">
-                  {chat.createdAt?.toDate?.().toLocaleString()}
-                </small>
-              </div>
-
-              <a
-                href={`/chat?id=${chat.id}`}
-                className="btn btn-sm btn-outline-primary"
-              >
-                Abrir
-              </a>
-            </div>
-
-            {chat.messages?.length > 0 && (
-              <div className="mt-2 text-muted small">
-                {chat.messages.at(-1)?.text?.slice(0, 60)}
-              </div>
-            )}
-
-          </div>
-        ))}
-
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2 className="fw-bold m-0">Histórico</h2>
+        <Link to="/chat" className="btn btn-primary btn-sm">Nova conversa</Link>
       </div>
 
-      <div className="text-center mt-4">
-        <a href="/chat" className="btn btn-primary">
-          Nova conversa
-        </a>
+      <div className="list-group list-group-flush">
+        {chats.map(chat => (
+          <HistoryItem 
+            key={chat.id}
+            id={chat.id}
+            createdAt={chat.createdAt}
+            lastMessage={chat.messages?.at(-1)?.text}
+          />
+        ))}
       </div>
     </div>
   )
