@@ -1,43 +1,50 @@
-import Home from './pages/Home'
-import About from './pages/About'
-import Chat from './pages/ChatPage'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import History from './pages/History'
-import Dashboard from './pages/Dashboard'
-import Header from './components/layout/Header'
-import Footer from './components/layout/Footer'
-import { Routes, Route } from 'react-router-dom'
-import { ChatProvider } from './components/context/ChatContext'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import './App.css'
-import './styles/responsive.css'
+import { Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from './hooks/useTheme'; // Importação do novo Provider
+import { ChatProvider } from './components/context/ChatContext';
+
+// Páginas e Componentes
+import Home from './pages/Home';
+import About from './pages/About';
+import Chat from './pages/ChatPage';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import History from './pages/History';
+import Dashboard from './pages/Dashboard';
+import Header from './components/layout/Header';
+import Footer from './components/layout/Footer';
+
+// Estilos
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
+import './styles/responsive.css';
 
 function App() {
   return (
-    <ChatProvider>
-      <div className="d-flex flex-column min-vh-100">
-        <Header />
-        <main className="flex-grow-1">
-          <Routes>
-            <Route path="/" element={<Home description="Assistente de IA" />} />
-            <Route
-              path="/about"
-              element={
-                <About description="Este é um assistente de inteligência artificial desenvolvido para ajudar os usuários a obter informações e realizar tarefas de forma eficiente." />
-              }
-            />
-            <Route path="/chat" element={<Chat />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/history" element={<History />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </ChatProvider>
-  )
+    <ThemeProvider>
+      <ChatProvider>
+        <div className="d-flex flex-column min-vh-100">
+          <Header />
+          <main className="flex-grow-1">
+            <Routes>
+              <Route path="/" element={<Home description="Assistente de IA" />} />
+              <Route
+                path="/about"
+                element={
+                  <About description="Assistente de IA desenvolvido para eficiência." />
+                }
+              />
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/history" element={<History />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </ChatProvider>
+    </ThemeProvider>
+  );
 }
 
-export default App
+export default App;

@@ -1,3 +1,103 @@
+/* ================================================= */
+/* CONFIGURAÇÃO GLOBAL DO TEMA (USE_THEME)           */
+/* ================================================= */
+
+/* 1. Base do Body e Texto Geral */
+body.bg-dark {
+  background-color: #212529 !important;
+  color: #f8f9fa !important;
+}
+
+/* 2. Hero, Descrições e Textos Secundários */
+body.bg-dark .text-muted,
+body.bg-dark .lead,
+body.bg-dark .form-text {
+  color: #adb5bd !important; /* Cinza claro para leitura no escuro */
+}
+
+/* 3. Títulos (Home, Dashboard e Páginas) */
+body.bg-dark h1, 
+body.bg-dark h2, 
+body.bg-dark h3, 
+body.bg-dark h4,
+body.bg-dark .display-4 {
+  color: #ffffff !important;
+}
+
+/* 4. Cards (Dashboard, Login, Registo) */
+body.bg-dark .card {
+  background-color: #2b3035 !important;
+  border-color: #495057 !important;
+  color: white !important;
+}
+
+/* 5. Inputs e Formulários (Login, Registo, Chat) */
+/* Reforço para garantir que o texto escrito seja branco no Chat */
+body.bg-dark input, 
+body.bg-dark textarea, 
+body.bg-dark select,
+body.bg-dark .form-control {
+  background-color: #343a40 !important;
+  color: #ffffff !important; /* Texto branco ao digitar */
+  border-color: #495057 !important;
+}
+
+/* Cor do texto de sugestão (placeholder) */
+body.bg-dark input::placeholder,
+body.bg-dark textarea::placeholder {
+  color: #6c757d !important;
+}
+
+/* Garante que os labels fiquem visíveis */
+body.bg-dark label {
+  color: #dee2e6 !important;
+}
+
+/* 6. Barra Lateral e Listas (Histórico e Conversas) */
+/* Alvo para a sidebar e divisórias de coluna */
+body.bg-dark .sidebar,
+body.bg-dark .border-end {
+  background-color: #212529 !important;
+  border-color: #373b3e !important;
+}
+
+body.bg-dark .list-group-item {
+  background-color: #2b3035 !important;
+  color: #ffffff !important;
+  border-color: #373b3e !important;
+}
+
+/* Links na barra lateral */
+body.bg-dark .nav-link {
+  color: #dee2e6 !important;
+}
+
+body.bg-dark .nav-link:hover {
+  background-color: #343a40 !important;
+  color: #ffffff !important;
+}
+
+/* 7. Tabelas (Histórico) */
+body.bg-dark .table {
+  color: white !important;
+  --bs-table-bg: #212529; 
+  border-color: #373b3e !important;
+}
+
+/* 8. Ajuste para Elementos Brancos fixos (Bolhas do Chat) */
+body.bg-dark .bg-white,
+body.bg-dark .bg-light {
+  background-color: #2b3035 !important;
+  color: white !important;
+}
+
+/* 9. Bordas de Separação Gerais */
+body.bg-dark .border-bottom {
+  border-color: #373b3e !important;
+}
+
+
+
 .counter {
   font-size: 16px;
   padding: 5px 10px;
