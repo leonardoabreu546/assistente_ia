@@ -2,19 +2,24 @@ import { useState, useEffect } from 'react'
 
 export function useTheme() {
   const [theme, setTheme] = useState(() => {
-    const savedTheme = localStorage.getItem('theme')
-    return savedTheme || 'light'
+    return localStorage.getItem('theme') || 'light'
   })
 
   useEffect(() => {
     localStorage.setItem('theme', theme)
-    document.body.className = theme === 'dark' 
-      ? 'bg-dark text-white' 
-      : 'bg-light text-dark'
+    
+    // Aplica as classes do Bootstrap diretamente para não teres de configurar CSS
+    if (theme === 'dark') {
+      document.body.classList.remove('bg-light', 'text-dark')
+      document.body.classList.add('bg-dark', 'text-white')
+    } else {
+      document.body.classList.remove('bg-dark', 'text-white')
+      document.body.classList.add('bg-light', 'text-dark')
+    }
   }, [theme])
 
   const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'dark' ? 'light' : 'dark')
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark')
   }
 
   return { theme, toggleTheme }

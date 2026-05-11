@@ -1,51 +1,27 @@
-import { useState, useEffect } from "react"
-import { db, auth } from "../firebase/firebaseConfig"
-import { collection, query, where, orderBy, onSnapshot } from "firebase/firestore"
-import EmptyHistory from "../components/history/EmptyHistory"
-import HistoryHeader from "../components/history/HistoryHeader"
-import HistoryList from "../components/history/HistoryList"
-
-interface ChatHistory {
-  id: string;
-  userId: string;
-  messages: { type: string; text: string }[];
-  createdAt?: any;
-}
+import { useChat } from "../components/context/ChatContext";
+import EmptyHistory from "../components/history/EmptyHistory";
+import HistoryHeader from "../components/history/HistoryHeader";
+import HistoryList from "../components/history/HistoryList";
 
 export default function History() {
-  const [chats, setChats] = useState<ChatHistory[]>([])
+  // Consumimos as sessões diretamente do nosso Contexto (LocalStorage)
+  const { sessions } = useChat();
 
-  useEffect(() => {
-    const user = auth.currentUser
-    if (!user) {
-      setChats([])
-      return
-    }
-
-    const q = query(
-      collection(db, "chats"),
-      where("userId", "==", user.uid),
-      orderBy("createdAt", "desc")
-    )
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as ChatHistory[]
-
-      setChats(data)
-    })
-
-    return () => unsubscribe()
-  }, [])
-
-  if (chats.length === 0) return <EmptyHistory />
+  // Se não houver sessões, mostra o estado vazio
+  if (sessions.length === 0) {
+    return (
+      <div className="container mt-4">
+        <HistoryHeader />
+        <EmptyHistory />
+      </div>
+    );
+  }
 
   return (
     <div className="container mt-4">
       <HistoryHeader />
-      <HistoryList chats={chats} />
+      {/* Passamos as sessões do contexto para a lista */}
+      <HistoryList chats={sessions} />
     </div>
-  )
+  );
 }

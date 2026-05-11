@@ -11,8 +11,9 @@ export default function HistoryList({ chats }: HistoryListProps) {
         <HistoryItem
           key={chat.id}
           id={chat.id}
-          createdAt={chat.createdAt}
-          lastMessage={chat.messages?.at(-1)?.text}
+          title={chat.title}
+          createdAt={chat.lastActivity} // No nosso contexto usamos lastActivity
+          lastMessage={chat.messages?.length > 0 ? chat.messages[chat.messages.length - 1].text : "Sem mensagens"}
         />
       ))}
     </div>

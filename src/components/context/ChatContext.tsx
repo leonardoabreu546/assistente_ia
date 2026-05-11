@@ -20,18 +20,17 @@ interface ChatContextType {
   sendMessage: (text: string) => void;
   addAIResponse: (text: string) => void;
   setCurrentSessionId: (id: string | null) => void;
+  deleteChat: (id: string) => void; // Nova função
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
-  // Inicializa o estado tentando carregar do LocalStorage
   const [sessions, setSessions] = useState<ChatSession[]>(() => {
     const saved = localStorage.getItem("chat_sessions");
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        // Converte strings de data de volta para objetos Date (essencial para o TS e Dashboard)
         return parsed.map((s: any) => ({
           ...s,
           lastActivity: new Date(s.lastActivity),
@@ -50,7 +49,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
 
-  // Salva no LocalStorage sempre que houver mudanças nas sessões
   useEffect(() => {
     localStorage.setItem("chat_sessions", JSON.stringify(sessions));
   }, [sessions]);
@@ -65,6 +63,16 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     };
     setSessions([newChat, ...sessions]);
     setCurrentSessionId(newId);
+  };
+
+  const deleteChat = (id: string) => {
+    const updatedSessions = sessions.filter(s => s.id !== id);
+    setSessions(updatedSessions);
+    
+    // Se apagarmos o chat ativo, desativamos a seleção ou focamos no próximo
+    if (currentSessionId === id) {
+      setCurrentSessionId(updatedSessions.length > 0 ? updatedSessions[0].id : null);
+    }
   };
 
   const sendMessage = (text: string) => {
@@ -96,7 +104,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   const addAIResponse = (text: string) => {
     const aiMessage: Message = { type: 'ai', text, timestamp: new Date() };
-
     setSessions(prev => prev.map(session => {
       if (session.id === currentSessionId) {
         return {
@@ -116,7 +123,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       createNewChat, 
       sendMessage, 
       addAIResponse, 
-      setCurrentSessionId 
+      setCurrentSessionId,
+      deleteChat 
     }}>
       {children}
     </ChatContext.Provider>
@@ -125,8 +133,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
 export const useChat = () => {
   const context = useContext(ChatContext);
-  if (!context) {
-    throw new Error("useChat deve ser usado dentro de um ChatProvider");
-  }
+  if (!context) throw new Error("useChat deve ser usado dentro de um ChatProvider");
   return context;
 };

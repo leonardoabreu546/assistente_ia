@@ -1,4 +1,4 @@
-import { ReactNode } from "react"
+import React, { type ReactNode } from "react"; 
 
 type ChatLineProps = {
   text: ReactNode // Alterado de string para ReactNode

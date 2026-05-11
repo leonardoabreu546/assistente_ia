@@ -11,19 +11,31 @@ const TinyBarChart = ({ data }: { data: ChartData[] }) => {
   ]
 
   return (
-    // Removendo o ResponsiveContainer e usando largura fixa para teste
     <div className="d-flex justify-content-center w-100">
       <BarChart
-        width={500} // Largura fixa para garantir que renderize
+        width={500}
         height={250}
         data={chartData}
         margin={{ top: 5, right: 30, left: 0, bottom: 5 }}
       >
         <CartesianGrid strokeDasharray="3 3" vertical={false} />
         <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Bar dataKey="messages" fill="#0d6efd" radius={[4, 4, 0, 0]} />
+        
+        <YAxis 
+          allowDecimals={false} 
+          // Força o valor a ser exibido apenas se for inteiro
+          tickFormatter={(value) => Math.round(value).toString()} 
+          // Garante que o eixo comece em 0 e termine num número inteiro
+          domain={[0, 'auto']} 
+        />
+        
+        <Tooltip cursor={{fill: 'transparent'}} />
+        <Bar 
+          dataKey="messages" 
+          fill="#0d6efd" 
+          radius={[4, 4, 0, 0]} 
+          barSize={40}
+        />
       </BarChart>
     </div>
   );
