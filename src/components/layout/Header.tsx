@@ -8,6 +8,9 @@ import { useTheme } from '../../hooks/useTheme'
 function Header() {
   const [user, setUser] = useState<User | null>(null)
   const { theme, toggleTheme } = useTheme()
+  
+  // 1. Criar o estado para o menu (false = fechado)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -19,6 +22,7 @@ function Header() {
   const handleLogout = async () => {
     try {
       await signOut(auth)
+      setIsMenuOpen(false) // Fechar menu ao fazer logout
     } catch (error) {
       console.error(error)
     }
@@ -28,34 +32,43 @@ function Header() {
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container">
         <Link className="navbar-brand" to="/">Assistente IA</Link>
-        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        
+        {/* 2. Alterar o botão: remover data-bs e adicionar onClick */}
+        <button 
+          className="navbar-toggler" 
+          type="button" 
+          onClick={() => setIsMenuOpen(!isMenuOpen)} 
+          aria-expanded={isMenuOpen}
+        >
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
+
+        {/* 3. Adicionar a classe 'show' dinamicamente se isMenuOpen for true */}
+        <div className={`collapse navbar-collapse ${isMenuOpen ? 'show' : ''}`} id="navbarNav">
           <ul className="navbar-nav ms-auto align-items-center">
             <li className="nav-item">
-              <Link className="nav-link" to="/">Home</Link>
+              <Link className="nav-link" to="/" onClick={() => setIsMenuOpen(false)}>Home</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/about">Sobre</Link>
+              <Link className="nav-link" to="/about" onClick={() => setIsMenuOpen(false)}>Sobre</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/chat">Chat</Link>
+              <Link className="nav-link" to="/chat" onClick={() => setIsMenuOpen(false)}>Chat</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/history">Histórico</Link>
+              <Link className="nav-link" to="/history" onClick={() => setIsMenuOpen(false)}>Histórico</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/dashboard">Dashboard</Link>
+              <Link className="nav-link" to="/dashboard" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
             </li>
 
             {!user ? (
               <>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/login">Login</Link>
+                  <Link className="nav-link" to="/login" onClick={() => setIsMenuOpen(false)}>Login</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/register">Registar</Link>
+                  <Link className="nav-link" to="/register" onClick={() => setIsMenuOpen(false)}>Registar</Link>
                 </li>
               </>
             ) : (
